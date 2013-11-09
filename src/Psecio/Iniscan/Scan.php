@@ -14,7 +14,7 @@ class Scan
 	 * Set of context environments to run in (ex. "prod" or "dev")
 	 * @var array
 	 */
-	private $contexts = array();
+	private $context = array();
 
 	/**
 	 * Init the object with the given ini path
