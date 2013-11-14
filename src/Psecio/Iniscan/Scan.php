@@ -17,16 +17,23 @@ class Scan
 	private $context = array();
 
 	/**
+	 * The threshold to use for the rules. Only use the rules that are on
+	 * or above this threshold.
+	 */
+	private $threshold;
+
+	/**
 	 * Init the object with the given ini path
 	 *
 	 * @param string $path PHP.ini path to evaluate [optional]
 	 */
-	public function __construct($path = null, array $context = array())
+	public function __construct($path = null, array $context = array(), $threshold = null)
 	{
 		if ($path !== null) {
 			$this->setPath($path);
 		}
 		$this->setContext($context);
+		$this->setThreshold($threshold);
 	}
 
 	/**
@@ -70,6 +77,24 @@ class Scan
 	public function getContext()
 	{
 		return $this->context;
+	}
+
+	/**
+	 * Set the threshold for rules that should be displayed
+	 *
+	 * @param string $threshold The threshold to use
+	 */
+	public function setThreshold($threshold) {
+		$this->threshold = $threshold;
+	}
+
+	/**
+	 * Returns the current threshold
+	 *
+	 * @return string The Threshold for rules
+	 */
+	public function getThreshold() {
+		return $this->threshold;
 	}
 
 	/**
@@ -177,6 +202,10 @@ class Scan
 
 				$key = $rule->getTestKey();
 				if ($this->isDeprecated($key) === true) {
+					continue;
+				}
+
+				if (!$rule->respectThreshold($this->threshold)) {
 					continue;
 				}
 
