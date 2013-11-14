@@ -16,7 +16,13 @@ class Scan
 	 */
 	private $context = array();
 
-	/**
+    /**
+	 * Set of ini keys marked as deprecated
+	 * @var array
+	 */
+	private $marked = array();
+
+    /**
 	 * The threshold to use for the rules. Only use the rules that are on
 	 * or above this threshold.
 	 */

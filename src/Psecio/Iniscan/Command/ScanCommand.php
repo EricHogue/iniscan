@@ -48,19 +48,21 @@ class ScanCommand extends Command
         }
 
         if (!is_file($path)) {
-            throw new \Exception('Path is null or not not accessible: "'.$path.'"');
+            throw new \Exception('Path is null or not accessible: "'.$path.'"');
         }
 
         $scan = new \Psecio\Iniscan\Scan($path, $context, $threshold);
         $results = $scan->execute();
-
+        $deprecated = $scan->getMarked();
+        
         $options = array(
             'path' => $path,
-            'failOnly' => $failOnly
+            'failOnly' => $failOnly,
+            'deprecated' => $deprecated
         );
 
         $format = ($format === null) ? 'console' : $format;
-        $formatClass = "\\Psecio\\Iniscan\\Command\\Scan\\Output\\".ucwords(strtolower($format));
+        $formatClass = "\\Psecio\\Iniscan\\Command\\ScanCommand\\Output\\".ucwords(strtolower($format));
         if (!class_exists($formatClass)) {
             throw new \Psecio\Iniscan\Exceptions\FormatNotFoundException('Output format "'.$format.'" not found');
         }

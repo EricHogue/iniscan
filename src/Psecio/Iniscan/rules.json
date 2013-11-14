@@ -72,7 +72,7 @@
 				"PHP": [
 					{
 						"name": "Disallow remote file open",
-						"description": "Do not allow the opening of remote file resoources ('Off' recommended)",
+						"description": "Do not allow the opening of remote file resources ('Off' recommended)",
 						"level": "ERROR",
 						"test": {
 							"key": "allow_url_fopen",
@@ -227,12 +227,32 @@
 						}
 					},
 					{
+						"name": "Reduce max upload size",
+						"description": "The max upload size should not be too high, to prevent server overload from large requests",
+						"level": "WARNING",
+						"test": {
+							"key": "upload_max_filesize",
+							"operation": "smaller",
+							"value": "2M"
+						}
+					},
+					{
 						"name": "Define a reasonable memory limit",
 						"description": "A memory limit should be defined to prevent server overload from large processes",
 						"level": "WARNING",
 						"test": {
 							"key": "memory_limit",
 							"operation": "isset"
+						}
+					},
+					{
+						"name": "Reduce memory limit",
+						"description": "The standard memory limit should not be too high, if you need more memory for a single script you can adjust that during runtime using ini_set()",
+						"level": "WARNING",
+						"test": {
+							"key": "memory_limit",
+							"operation": "smaller",
+							"value": "128M"
 						}
 					}
 				],
@@ -251,7 +271,8 @@
 				"register_globals": "5.4.0",
 				"magic_quotes_gpc": "5.4.0",
 				"safe_mode": "5.4.0",
-				"magic_quotes_runtime": "5.4.0"
+				"magic_quotes_runtime": "5.4.0",
+				"register_long_arrays": "5.3.0"
 			}
 		}
 	]
