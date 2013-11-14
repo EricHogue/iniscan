@@ -17,6 +17,12 @@ class Scan
 	private $context = array();
 
 	/**
+	 * Set of ini keys marked as deprecated
+	 * @var array
+	 */
+	private $marked = array();
+
+	/**
 	 * Init the object with the given ini path
 	 *
 	 * @param string $path PHP.ini path to evaluate [optional]

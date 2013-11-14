@@ -61,6 +61,19 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($rule->getTest(), (object)$test);
     }
 
+    public function testGetRuleContext()
+    {
+        $context = array('prod');
+        $test = array(
+            'key' => 'foo',
+            'context' => $context
+        );
+        $rule = new Rule(array(), 'testsection');
+        $rule->setTest($test);
+
+        $this->assertEquals($rule->getContext(), $context);
+    }
+
     /**
      * Test that the description is set correctly
      *
@@ -179,6 +192,18 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that an exception is thrown when no test key is defined
+     * 
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetTestKeyNoKey()
+    {
+        $config = array('test' => (object)array());
+        $rule = new Rule($config, 'testing123');
+        $rule->getTestKey();
+    }
+
+    /**
      * Test the result of the values method to
      *     make an array from the object
      * 
@@ -194,5 +219,86 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         );
         $rule = new Rule($config, 'testing123');
         $this->assertEquals($rule->values(), $config);
+    }
+
+    /**
+     * Test the getter/setter for the name property
+     * 
+     * @covers \Psecio\Iniscan\Rule::getName
+     * @covers \Psecio\Iniscan\Rule::setName
+     */
+    public function testGetSetName()
+    {
+        $name = 'test name';
+        $rule = new Rule(array(), 'testing123');
+        $rule->setName($name);
+
+        $this->assertEquals($rule->getName(), $name);
+    }
+
+    /**
+     * Test the evaluation of a passing rule
+     * 
+     * @covers \Psecio\Iniscan\Rule::evaluate
+     */
+    public function testEvaluationValid()
+    {
+        $test = array(
+            'key' => 'foo',
+            'operation' => 'equals',
+            'value' => '1'
+        );
+        $ini = array(
+            'PHP' => array(
+                'foo' => '1'
+            )
+        );
+        $rule = new Rule(array(), 'PHP');
+        $rule->setTest($test);
+
+        $result = $rule->evaluate($ini);
+        $this->assertTrue($rule->getStatus());
+    }
+
+    /**
+     * Test the evluation of a failing rule
+     * 
+     * @covers \Psecio\Iniscan\Rule::evaluate
+     */
+    public function testEvaluationInvalid()
+    {
+        $test = array(
+            'key' => 'foo',
+            'operation' => 'equals',
+            'value' => '1'
+        );
+        $ini = array(
+            'PHP' => array(
+                'foo' => 'test'
+            )
+        );
+        $rule = new Rule(array(), 'PHP');
+        $rule->setTest($test);
+
+        $result = $rule->evaluate($ini);
+        $this->assertFalse($rule->getStatus());
+    }
+
+    /**
+     * Test the evlauation with a bad operation
+     * 
+     * @expectedException \InvalidArgumentException
+     * @covers \Psecio\Iniscan\Rule::evaluate
+     */
+    public function testEvaluationBadOperation()
+    {
+        $rule = new Rule(array(), 'PHP');
+        $rule->setTest(array(
+            'key' => 'foo',
+            'operation' => 'badop',
+            'value' => '1'
+        ));
+        $ini = array();
+        $result = $rule->evaluate($ini);
     }
 }
